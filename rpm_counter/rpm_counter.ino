@@ -59,7 +59,7 @@ void setup() {
 }
 
 void loop() {
-  // a cada três segundos passa 1/20 segundos
+  // a cada três segundos passa 1/20 minutos
   // são 20 risquinhos no encoder
   if(millis()%3000){
     Serial.println(risquinhos);
