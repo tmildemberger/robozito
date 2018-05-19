@@ -3,6 +3,12 @@
 #define MOTOR_Y1 11 // 
 #define MOTOR_Y2 4 //  
 
+#define PINO_INT0 2
+#define PINO_INT1 3
+
+#define OC1A 9
+#define OC1B 10
+
 void setup() {
   // timer 1 para o motor E e D
   // contagem até 625 ( 0 -> 625 -> 0 )
@@ -43,7 +49,7 @@ void setup() {
 
 void loop() {
   // isso só serve para teste
-  if(millis()%7000){
+  if(millis()%5000){
     OCR1A = ((OCR1A + 125) % 625);
     OCR1B = ((OCR1B + 125) % 625);
   }

@@ -3,13 +3,28 @@
 #define MOTOR_Y1 11 // 
 #define MOTOR_Y2 4 // 
 
-volatile int risquinhos = 0;
+#define PINO_INT0 2
+#define PINO_INT1 3
 
-void encoder_int(){
-  risquinhos++;
+#define OC1A 9
+#define OC1B 10
+
+volatile int risquinhos0 = 0;
+
+volatile int risquinhos1 = 0;
+
+void encoder_int0(){
+  risquinhos0++;
+}
+
+void encoder_int1(){
+  risquinhos1++;
 }
 
 void setup() {
+  // usa as interrupção externa INT0 e 1 (encoders)
+  // para incrementar as variaveis risquinhos 
+  
   // timer 1 para o motor E e D
   // contagem até 625 ( 0 -> 625 -> 0 )
   // frequência -> 16M / 625*2 = 12.8kHz
@@ -50,10 +65,14 @@ void setup() {
   digitalWrite(MOTOR_Y2, HIGH);
 
   // pino digital 2 / INT0 => ENTRADA
-  pinMode(2, INPUT);
+  pinMode(PINO_INT0, INPUT);
 
+  // pino digital 3 / INT1 => ENTRADA
+  pinMode(PINO_INT1, INPUT);
+  
   // configura interrupção INT0
-  attachInterrupt(digitalPinToInterrupt(2), encoder_int, RISING);
+  attachInterrupt(digitalPinToInterrupt(PINO_INT0), encoder_int0, RISING);
+  attachInterrupt(digitalPinToInterrupt(PINO_INT1), encoder_int1, RISING);
 
   Serial.begin(115200);
 }
@@ -62,7 +81,11 @@ void loop() {
   // a cada três segundos passa 1/20 minutos
   // são 20 risquinhos no encoder
   if(millis()%3000){
-    Serial.println(risquinhos);
-    risquinhos = 0;
+    Serial.print("motor0:");
+    Serial.println(risquinhos0);
+    Serial.print("motor1:");
+    Serial.println(risquinhos1);
+    risquinhos0 = 0;
+    risquinhos1 = 0;
   }
 }

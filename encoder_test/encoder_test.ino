@@ -1,14 +1,33 @@
-// programa ainda não finalizado
-volatile int risquinhos = 0;
+#define MOTOR_X2 13 // 
+#define MOTOR_X1 12 // 
+#define MOTOR_Y1 11 // 
+#define MOTOR_Y2 4 // 
 
-void encoder_int(){
-  risquinhos++;
+#define PINO_INT0 2
+#define PINO_INT1 3
+
+#define OC1A 9
+#define OC1B 10
+
+volatile long tempo0 = 0;
+
+volatile long tempo1 = 0;
+
+void encoder_int0(){
+  micros() - 0;
+
+  tempo0 = micros();
+}
+
+void encoder_int1(){
+  micros();
+
+  tempo1 = micros();
 }
 
 void setup() {
-  // usa a interrupção externa INT0 (encoder)
-  // para incrementar a variavel risquinhos 
-
+  // usa as interrupção externa INT0 e 1 (encoders)
+  // para incrementar as variaveis risquinhos 
   
   // timer 1 para o motor E e D
   // contagem até 625 ( 0 -> 625 -> 0 )
@@ -40,11 +59,14 @@ void setup() {
   // contagem até 124 ( 0 -> 124 )
   // frequência -> 16M / 1024 = 15625 / 125 = 125Hz
   // escrever algo aqui
+
+  // mudança de planos
   
   
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  velocidade_desejada = 70; //70%
+  
 }
