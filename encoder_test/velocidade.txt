@@ -1,0 +1,12 @@
+velocidade => volta inteira = 20*interrupts
+
+
+tempo entre interrupts = 1/20*tempo para volta completa
+
+velocidade angular = 2pi*1/tempo para volta completa
+
+velocidade momentânea = velocidade angular * raio da roda
+
+tempo para volta completa = 20*tempo entre interrupts
+
+velocidade momentânea = 2*pi*raio da roda/(20*tempo entre interrupts)

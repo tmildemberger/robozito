@@ -9,18 +9,43 @@
 #define PWM1 11   //pino ENB do driver ponte H
 #define PWM2 6    //pino ENA
 
-volatile int risquinhos0 = 0;
-volatile int risquinhos1 = 0;
+/*
+ * são 20 risquinhos:
+volta inteira = 20*interrupts
 
-// cada vez que passa um risquinho pelo encoder N
-// a variável risquinhosN é incrementada
+tempo entre interrupts = 1/20*tempo para volta completa
+
+tempo para volta completa = 20*tempo entre interrupts
+
+velocidade angular = 2pi*1/tempo para volta completa
+
+velocidade momentânea = velocidade angular * raio da roda
+
+velocidade momentânea = 2*pi*raio da roda/(20*tempo entre interrupts)
+*/
+const double RAIO_DA_RODA = 32; //milímetros
+
+double calc_velocidade(long tempo_entre_interrupts){
+  // usa a fórmula acima, mas leva em conta o fato de que o tempo é
+  // medido em microssegundos
+  return ((TWO_PI*RAIO_DA_RODA*1000000)/(20.*tempo_entre_interrupts));
+}
+
+volatile long tempo0 = 0;
+volatile long diff0 = 0;
+volatile long tempo1 = 0;
+volatile long diff1 = 0;
 
 void encoder_int0(){
-  risquinhos0++;
+  diff0 = micros() - tempo0;
+
+  tempo0 = micros();
 }
 
 void encoder_int1(){
-  risquinhos1++;
+  diff1 = micros() - tempo1;
+
+  tempo1 = micros();
 }
 
 void setup() {
@@ -53,25 +78,13 @@ void setup() {
 }
 
 void loop() {
-  // a cada três segundos passa 1/20 minutos
-  // são 20 risquinhos no encoder
-  // por isso, o que temos na variável risquinhos
-  // é na verdade a velocidade do motor em RPM
-  if(millis()%3000 == 0){
+  if(millis()%2000 == 0){
     detachInterrupt(digitalPinToInterrupt(PINO_INT0));
     detachInterrupt(digitalPinToInterrupt(PINO_INT1));
-    Serial.print("motor1:");
-    Serial.println(risquinhos0);
-    Serial.print("motor2:");
-    Serial.println(risquinhos1);
-    Serial.print("\n"); //para separar melhor as medições
-    
-    delay(1); // para garantir que os valores sejam mostrados somente
-              // uma vez a cada 3ms
-
-    // a contagem recomeça
-    risquinhos0 = 0;
-    risquinhos1 = 0;
+    Serial.print("motor0 (mm/s) ->"); //velocidade em milímetros por segundo
+    Serial.println(diff0);//calc_velocidade(diff0));
+    Serial.print("motor1 (mm/s) ->");
+    Serial.println(diff1);//calc_velocidade(diff1));
     attachInterrupt(digitalPinToInterrupt(PINO_INT0), encoder_int0, RISING);
     attachInterrupt(digitalPinToInterrupt(PINO_INT1), encoder_int1, RISING);
   }
